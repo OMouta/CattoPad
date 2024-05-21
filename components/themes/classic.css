@@ -1,0 +1,179 @@
+/* main window */
+QMainWindow {
+    background-color: #F5F5F5;
+}
+
+/* text editor */
+QPlainTextEdit {
+    background-color: #FFFFFF;
+    color: #000000;
+    border: 1px solid #CCCCCC;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 12px;
+}
+
+/* list widget */
+QListWidget {
+    background-color: #FFFFFF;
+    color: #000000;
+    border: 1px solid #CCCCCC;
+}
+
+QListWidget::item:selected {
+    background-color: #CCCCCC;
+}
+
+/* markdown preview */
+QTextBrowser {
+    background-color: #FFFFFF;
+    color: #000000;
+    border: 1px solid #CCCCCC;
+}
+
+/* menu bar */
+QMenuBar {
+    background-color: #E0E0E0;
+}
+
+QMenuBar::item {
+    background-color: #E0E0E0;
+}
+
+QMenuBar::item:selected {
+    background-color: #CCCCCC;
+}
+
+/* menu */
+QMenu {
+    background-color: #E0E0E0;
+}
+
+QMenu::item:selected {
+    background-color: #CCCCCC;
+}
+
+/* splitter */
+QSplitter::handle {
+    background-color: #CCCCCC;
+}
+
+/* main window */
+QWidget {
+    background-color: #F5F5F5;
+}
+
+/* text editor */
+QPlainTextEdit {
+    color: #000000;
+    background-color: #FFFFFF;
+    selection-background-color: #B7D4FF;
+    selection-color: #000000;
+}
+
+/* tab widget */
+QTabWidget::pane {
+    border: 0;
+}
+
+QTabWidget::tab-bar {
+    alignment: center;
+}
+
+QTabBar::tab {
+    background-color: #E0E0E0;
+    color: #000000;
+    padding: 5px;
+}
+
+QTabBar::tab:selected {
+    color: #000000;
+    background-color: #FFFFFF;
+}
+
+/* list widget */
+QListWidget {
+    background-color: #FFFFFF;
+    color: #000000;
+}
+
+QListWidget::item:selected {
+    background-color: #B7D4FF;
+    color: #000000;
+}
+
+/* menu bar */
+QMenuBar {
+    background-color: #E0E0E0;
+}
+
+QMenuBar::item {
+    color: #000000;
+}
+
+QMenuBar::item:selected {
+    background-color: #B7D4FF;
+}
+
+/* menu */
+QMenu {
+    background-color: #E0E0E0;
+}
+
+QMenu::item {
+    color: #000000;
+}
+
+QMenu::item:selected {
+    background-color: #B7D4FF;
+}
+
+/* scroll bars */
+QScrollBar:vertical {
+    background: #E0E0E0;
+    width: 15px;
+    margin: 15px 0 15px 0;
+    border: 1px solid #CCCCCC;
+}
+
+QScrollBar::handle:vertical {
+    background: #CCCCCC;
+    min-height: 20px;
+}
+
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    border: 1px solid #CCCCCC;
+    background: #E0E0E0;
+    height: 15px;
+    subcontrol-position: bottom;
+    subcontrol-origin: margin;
+}
+
+/* buttons */
+QPushButton {
+    color: #000000;
+    background-color: #E0E0E0;
+    border: 1px solid #CCCCCC;
+    padding: 5px;
+}
+
+QPushButton:hover {
+    background-color: #D0D0D0;
+}
+
+QPushButton:pressed {
+    background-color: #B7D4FF;
+}
+
+/* line edits */
+QLineEdit {
+    color: #000000;
+    background-color: #FFFFFF;
+    border: 1px solid #CCCCCC;
+    padding: 5px;
+}
+
+QMessageBox {
+    background-color: #FFFFFF;
+    color: #000000;
+    border: 1px solid #CCCCCC;
+}
