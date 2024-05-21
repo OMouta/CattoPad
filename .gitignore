@@ -1,3 +1,7 @@
 /.venv
 /.exe
 /.html
+/dist
+/.spec
+/.Ink
+/build
