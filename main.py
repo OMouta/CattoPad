@@ -1,12 +1,16 @@
-from PyQt5.QtWidgets import QApplication, QMainWindow, QPlainTextEdit, QFileDialog, QAction, QVBoxLayout, QWidget, QListWidget, QStackedWidget, QSplitter, QTextBrowser, QMessageBox
+from PyQt5.QtWidgets import QApplication, QMainWindow, QPlainTextEdit, QFileDialog, QAction, QVBoxLayout, QWidget, QListWidget, QStackedWidget, QSplitter, QTextBrowser, QMessageBox, QLabel
 from PyQt5.QtCore import QFile, QTextStream
-from PyQt5.QtGui import QIcon, QKeySequence
+from PyQt5.QtGui import QIcon, QKeySequence, QFontDatabase, QFont
 
 from markdown import markdown
 
 import json
 import sys
 import os
+
+import importlib.util
+
+from plugin_interface import PluginInterface
 
 script_dir = os.path.dirname(__file__)
 components_dir = os.path.join(script_dir, 'components')
@@ -20,8 +24,6 @@ def load_stylesheet(filename):
     stream = QTextStream(file)
     stylesheet = stream.readAll()
     return stylesheet
-
-
 
 class MainWindow(QMainWindow):
     
@@ -76,7 +78,40 @@ class MainWindow(QMainWindow):
     
     def __init__(self):
         super(MainWindow, self).__init__()
+        self.plugins = {}
         
+        def load_plugins(self):
+            plugins_dir = 'components/plugins'
+            plugin_files = [f for f in os.listdir(plugins_dir) if f.endswith('.py')]
+
+            plugins_menu = self.menuBar().addMenu("Plugins")
+
+            for plugin_file in plugin_files:
+                try:
+                    spec = importlib.util.spec_from_file_location("plugin_module", os.path.join(plugins_dir, plugin_file))
+                    plugin_module = importlib.util.module_from_spec(spec)
+                    spec.loader.exec_module(plugin_module)
+                    for item_name in dir(plugin_module):
+                        item = getattr(plugin_module, item_name)
+                        if isinstance(item, type) and issubclass(item, PluginInterface) and item is not PluginInterface:
+                            plugin_class = item
+                            plugin_instance = plugin_class()
+                
+                            plugin_action = QAction(f"{plugin_instance.get_name()} (v{plugin_instance.get_version()}) by {plugin_instance.get_author()}: {plugin_instance.get_description()}", self)
+                
+                            if plugin_instance.run_on_startup():
+                                plugin_instance.run(self)
+                            else:
+                                plugin_action.triggered.connect(lambda: plugin_instance.run(self))
+                
+                            self.plugins[plugin_instance.get_name()] = plugin_instance
+                
+                            plugins_menu.addAction(plugin_action)
+                except Exception as e:
+                    error_action = QAction(f"Failed to load plugin {plugin_file}: {str(e)}", self)
+                    print(f"Failed to load plugin {plugin_file}: {str(e)}")
+                    plugins_menu.addAction(error_action)
+                
         self.unsaved_tabs = set()
         
         self.setWindowTitle('CattoPad')
@@ -112,10 +147,17 @@ class MainWindow(QMainWindow):
         self.load_file_paths()
         
         self.load_state()
+        print("Loaded state")
+        load_plugins(self)
+        print("Loaded plugins")
         
         if len(sys.argv) > 1:
             file_path = sys.argv[1]
             self.open_file(file_path)
+        
+        font_database = QFontDatabase()
+        for font_file in os.listdir('components/fonts'):
+            font_database.addApplicationFont(os.path.join('components/fonts', font_file))
     
     def mark_unsaved(self):
         current_tab = self.stacked_widget.currentWidget()
@@ -158,6 +200,15 @@ class MainWindow(QMainWindow):
             theme_action = QAction(theme_file, self)
             theme_action.triggered.connect(lambda checked, theme_file=theme_file: self.switch_theme(os.path.join(themes_dir, theme_file)))
             switch_theme.addAction(theme_action)
+        
+        font_database = QFontDatabase()
+        font_menu = main_menu.addMenu("Fonts")
+        
+        for font_name in font_database.families():
+            font_action = QAction(font_name, self)
+            font_action.setFont(QFont(font_name))  # Set the font of the QAction's text
+            font_action.triggered.connect(lambda checked, font_name=font_name: self.switch_font(font_name))
+            font_menu.addAction(font_action)
     
         file_menu = menu_bar.addMenu('File')
     
@@ -238,6 +289,12 @@ class MainWindow(QMainWindow):
     def switch_theme(self, theme_file):
         stylesheet = load_stylesheet(theme_file)
         self.setStyleSheet(stylesheet)
+    
+    def switch_font(self, font_name):
+        font = QFont(font_name)
+        current_tab = self.stacked_widget.currentWidget()
+        if current_tab:
+            current_tab.setFont(font)
 
     def load_file_paths(self):
         if os.path.exists('temp/file_paths.json'):

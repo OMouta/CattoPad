@@ -5,3 +5,6 @@
 /.spec
 /.Ink
 /build
+**/__pycache__
+temp/file_paths.json
+temp/state.json
