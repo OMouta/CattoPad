@@ -1,6 +1,4 @@
-# README.md
-
-## Building the Application with PyInstaller
+# Building the Application with PyInstaller
 
 To build this application into a standalone executable using PyInstaller, follow these steps:
 
