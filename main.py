@@ -29,56 +29,48 @@ class MainWindow(QMainWindow):
     
     def save_state(self):
         state = {
-            'tabs': [],
-            'current_tab': self.stacked_widget.currentIndex(),
-            'markdown_preview_visible': self.markdown_preview.isVisible(),
+            'theme': self.current_theme,
+            'font': self.current_font,
         }
-    
-        for i in range(self.stacked_widget.count()):
-            tab = self.stacked_widget.widget(i)
-            tab_name = self.list_widget.item(i).text()
-            tab_file_path = self.file_paths.get(str(id(tab)), "")
-            state['tabs'].append({
-                'content': tab.toPlainText(),
-                'zoom_level': tab.font().pointSize(),
-                'name': tab_name,
-                'file_path': tab_file_path,
-            })
-    
-        with open('temp/state.json', 'w') as file:
-            json.dump(state, file)
+        with open('temp/state.json', 'w') as f:
+            json.dump(state, f)
 
     def load_state(self):
-        if not os.path.exists('temp/state.json'):
-            return
-
-        with open('temp/state.json', 'r') as file:
-            state = json.load(file)
-
-        for i, tab_state in enumerate(state['tabs']):
-            self.add_tab()
-            tab = self.stacked_widget.widget(i)
-            tab.setPlainText(tab_state['content'])
-            font = tab.font()
-            font.setPointSize(tab_state['zoom_level'])
-            tab.setFont(font)
-            self.list_widget.item(i).setText(tab_state['name'])
-            self.file_paths[str(id(tab))] = tab_state['file_path']
-
-        self.stacked_widget.setCurrentIndex(state['current_tab'])
-
-        if state['markdown_preview_visible']:
-            self.markdown_preview.show()
-        else:
-            self.markdown_preview.hide()
+        if os.path.exists('temp/state.json'):
+            
+            with open('temp/state.json', 'r') as f:
+                state = json.load(f)
+                
+            self.switch_theme(state['theme'])
+            self.switch_font(state['font'])
 
     def closeEvent(self, event):
-        self.save_state()
-        super().closeEvent(event)
+        
+        if self.unsaved_tabs:
+            reply = QMessageBox.question(self, 'Unsaved Changes',
+                                         "There are unsaved changes. Do you want to save them?",
+                                         QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel, QMessageBox.Cancel)
+
+            if reply == QMessageBox.Yes:
+                for tab_name in self.unsaved_tabs:
+                    for index in range(self.stacked_widget.count()):
+                        tab = self.stacked_widget.widget(index)
+                        if tab.objectName() == tab_name:
+                            self.stacked_widget.setCurrentIndex(index)
+                            self.save_file()
+            
+                self.save_state()
+                super().closeEvent(event)
+                
+            elif reply == QMessageBox.Cancel:
+                event.ignore()
+                return
     
     def __init__(self):
         super(MainWindow, self).__init__()
         self.plugins = {}
+        self.current_theme = 'components/themes/classic.css'
+        self.current_font = 'Arial'
         
         def load_plugins(self):
             plugins_dir = 'components/plugins'
@@ -158,6 +150,11 @@ class MainWindow(QMainWindow):
         font_database = QFontDatabase()
         for font_file in os.listdir('components/fonts'):
             font_database.addApplicationFont(os.path.join('components/fonts', font_file))
+            
+        self.switch_font(self.current_font)
+        
+        if self.stacked_widget.count() == 0:
+            self.add_tab()
     
     def mark_unsaved(self):
         current_tab = self.stacked_widget.currentWidget()
@@ -171,6 +168,8 @@ class MainWindow(QMainWindow):
         new_tab = QPlainTextEdit()
         new_tab.setObjectName(str(id(new_tab)))
         new_tab.textChanged.connect(self.update_markdown_preview)
+        font = QFont(self.current_font)
+        new_tab.setFont(font)
         self.stacked_widget.addWidget(new_tab)
         self.list_widget.addItem("Untitled")
         new_tab.textChanged.connect(self.mark_unsaved)
@@ -202,7 +201,7 @@ class MainWindow(QMainWindow):
             switch_theme.addAction(theme_action)
         
         font_database = QFontDatabase()
-        font_menu = main_menu.addMenu("Fonts")
+        font_menu = main_menu.addMenu("App Fonts")
         
         for font_name in font_database.families():
             font_action = QAction(font_name, self)
@@ -269,32 +268,36 @@ class MainWindow(QMainWindow):
             self.markdown_preview.setHtml(html)
         
     def zoom_in(self):
-        current_tab = self.stacked_widget.currentWidget()
-        if current_tab:
-            font = current_tab.font()
-            size = font.pointSize()
-            if size < 30:  # limit the zoom in size
-                font.setPointSize(size + 1)
-                current_tab.setFont(font)
-
+        for index in range(self.stacked_widget.count()):
+            current_tab = self.stacked_widget.widget(index)
+            if current_tab:
+                font = current_tab.font()
+                size = font.pointSize()
+                if size < 30:  # limit the zoom in size
+                    font.setPointSize(size + 1)
+                    current_tab.setFont(font)
+                    self.current_zoom = size
+    
     def zoom_out(self):
-        current_tab = self.stacked_widget.currentWidget()
-        if current_tab:
-            font = current_tab.font()
-            size = font.pointSize()
-            if size > 5:  # limit the zoom out size
-                font.setPointSize(size - 1)
-                current_tab.setFont(font)
+        for index in range(self.stacked_widget.count()):
+            current_tab = self.stacked_widget.widget(index)
+            if current_tab:
+                font = current_tab.font()
+                size = font.pointSize()
+                if size > 5:  # limit the zoom out size
+                    font.setPointSize(size - 1)
+                    current_tab.setFont(font)
+                    self.current_zoom = size
         
     def switch_theme(self, theme_file):
+        self.current_theme = theme_file
         stylesheet = load_stylesheet(theme_file)
         self.setStyleSheet(stylesheet)
     
     def switch_font(self, font_name):
+        self.current_font = font_name
         font = QFont(font_name)
-        current_tab = self.stacked_widget.currentWidget()
-        if current_tab:
-            current_tab.setFont(font)
+        QApplication.setFont(font)
 
     def load_file_paths(self):
         if os.path.exists('temp/file_paths.json'):
