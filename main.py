@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QApplication, QMainWindow, QPlainTextEdit, QFileDialog, QAction, QVBoxLayout, QWidget, QListWidget, QStackedWidget, QSplitter, QTextBrowser, QMessageBox, QLabel
+from PyQt5.QtWidgets import QApplication, QMainWindow, QPlainTextEdit, QFileDialog, QAction, QVBoxLayout, QWidget, QListWidget, QStackedWidget, QSplitter, QTextBrowser, QMessageBox
 from PyQt5.QtCore import QFile, QTextStream
 from PyQt5.QtGui import QIcon, QKeySequence, QFontDatabase, QFont
 
@@ -32,6 +32,10 @@ class MainWindow(QMainWindow):
             'theme': self.current_theme,
             'font': self.current_font,
         }
+
+        if not os.path.exists('temp'):
+            os.makedirs('temp')
+        
         with open('temp/state.json', 'w') as f:
             json.dump(state, f)
 
@@ -58,13 +62,13 @@ class MainWindow(QMainWindow):
                         if tab.objectName() == tab_name:
                             self.stacked_widget.setCurrentIndex(index)
                             self.save_file()
-            
-                self.save_state()
-                super().closeEvent(event)
                 
             elif reply == QMessageBox.Cancel:
                 event.ignore()
                 return
+            
+        self.save_state()
+        super().closeEvent(event)
     
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -155,6 +159,13 @@ class MainWindow(QMainWindow):
         
         if self.stacked_widget.count() == 0:
             self.add_tab()
+        
+        for index in range(self.stacked_widget.count()):
+            current_tab = self.stacked_widget.widget(index)
+            if current_tab:
+                font = current_tab.font()
+                font.setPointSize(10)
+                current_tab.setFont(font)
     
     def mark_unsaved(self):
         current_tab = self.stacked_widget.currentWidget()
@@ -273,10 +284,9 @@ class MainWindow(QMainWindow):
             if current_tab:
                 font = current_tab.font()
                 size = font.pointSize()
-                if size < 30:  # limit the zoom in size
+                if size < 30:
                     font.setPointSize(size + 1)
                     current_tab.setFont(font)
-                    self.current_zoom = size
     
     def zoom_out(self):
         for index in range(self.stacked_widget.count()):
@@ -284,10 +294,9 @@ class MainWindow(QMainWindow):
             if current_tab:
                 font = current_tab.font()
                 size = font.pointSize()
-                if size > 5:  # limit the zoom out size
+                if size > 6:  # limit the zoom out size
                     font.setPointSize(size - 1)
                     current_tab.setFont(font)
-                    self.current_zoom = size
         
     def switch_theme(self, theme_file):
         self.current_theme = theme_file

@@ -1,0 +1,197 @@
+/* main window */
+QMainWindow {
+    background-color: #000000;
+}
+
+/* text editor */
+QPlainTextEdit {
+    background-color: #0f0f0f;
+    color: #FFFFFF;
+    border: 1px solid #ffffff;
+    font-size: 12px;
+}
+
+/* list widget */
+QListWidget {
+    background-color: #0f0f0f;
+    color: #FFFFFF;
+    border: 1px solid #ffffff;
+}
+
+QListWidget::item:selected {
+    background-color: rgb(0, 102, 255);
+}
+
+/* markdown preview */
+QTextBrowser {
+    background-color: #0f0f0f;
+    color: #FFFFFF;
+    border: 1px solid #ffffff;
+}
+
+/* menu bar */
+QMenuBar {
+    background-color: #0f0f0f;
+}
+
+QMenuBar::item {
+    background-color: #0f0f0f;
+}
+
+QMenuBar::item:selected {
+    background-color: rgb(0, 102, 255);
+}
+
+/* menu */
+QMenu {
+    background-color: #0f0f0f;
+}
+
+QMenu::item:selected {
+    background-color: rgb(0, 102, 255);
+}
+
+/* splitter */
+QSplitter::handle {
+    background-color: #ffffff;
+}
+
+/* main window */
+QWidget {
+    background-color: #0f0f0f;
+}
+
+/* text editor */
+QPlainTextEdit {
+    color: #FFFFFF;
+    background-color: #0f0f0f;
+    selection-background-color: rgb(0, 38, 255);
+    selection-color: #FFFFFF;
+}
+
+/* tab widget */
+QTabWidget::pane {
+    border: 0;
+}
+
+QTabWidget::tab-bar {
+    alignment: center;
+}
+
+QTabBar::tab {
+    background-color: #0f0f0f;
+    color: #FFFFFF;
+    padding: 5px;
+}
+
+QTabBar::tab:selected {
+    color: #FFFFFF;
+    background-color: rgb(0, 102, 255);
+}
+
+/* list widget */
+QListWidget {
+    background-color: #0f0f0f;
+    color: #FFFFFF;
+}
+
+QListWidget::item:selected {
+    background-color: rgb(0, 102, 255);
+    color: #FFFFFF;
+}
+
+/* menu bar */
+QMenuBar {
+    background-color: #0f0f0f;
+}
+
+QMenuBar::item {
+    color: #FFFFFF;
+}
+
+QMenuBar::item:selected {
+    background-color: rgb(0, 102, 255);
+}
+
+/* menu */
+QMenu {
+    background-color: #0f0f0f;
+}
+
+QMenu::item {
+    color: #FFFFFF;
+}
+
+QMenu::item:selected {
+    background-color: rgb(0, 102, 255);
+}
+
+/* scroll bars */
+QScrollBar:vertical {
+    background: #0f0f0f;
+    width: 15px;
+    margin: 15px 0 15px 0;
+    border: 1px solid rgb(0, 102, 255);
+}
+
+QScrollBar::handle:vertical {
+    background: rgb(0, 102, 255);
+    min-height: 20px;
+}
+
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    border: 1px solid rgb(0, 102, 255);
+    background: #0f0f0f;
+    height: 15px;
+    subcontrol-position: bottom;
+    subcontrol-origin: margin;
+}
+
+/* buttons */
+QPushButton {
+    color: #FFFFFF;
+    background-color: #0f0f0f;
+    border: 1px solid #ffffff;
+    padding: 5px;
+}
+
+QPushButton:hover {
+    background-color: rgb(0, 102, 255);
+}
+
+QPushButton:pressed {
+    background-color: rgb(94, 255, 0);
+}
+
+/* line edits */
+QLineEdit {
+    color: #FFFFFF;
+    background-color: #0f0f0f;
+    border: 1px solid #ffffff;
+    padding: 5px;
+}
+
+QMessageBox {
+    background-color: #0f0f0f;
+    color: #FFFFFF;
+    border: 1px solid #ffffff;
+}
+
+QMessageBox QPushButton {
+    color: #FFFFFF;
+    background-color: #0f0f0f;
+    border: 1px solid #ffffff;
+    padding: 5px;
+}
+
+QMessageBox QPushButton:hover {
+    background-color: rgb(0, 102, 255)
+}
+
+QMessageBox QPushButton:pressed {
+    background-color: rgb(94, 255, 0);
+}
+
+QMessageBox QLabel {
+    color: #FFFFFF;
+}

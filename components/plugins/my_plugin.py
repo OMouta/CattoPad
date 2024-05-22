@@ -31,3 +31,6 @@ class SampleTextPlugin(PluginInterface):
 
     def run_on_startup(self):
         return False
+    
+    def needs_runtime(self):
+        return False

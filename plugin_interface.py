@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 class PluginInterface(ABC):
     @abstractmethod
-    def run(self, main_window):
+    async def run(self, main_window):
         pass
 
     @abstractmethod
@@ -23,4 +23,8 @@ class PluginInterface(ABC):
     
     @abstractmethod
     def run_on_startup(self):
+        pass
+
+    @abstractmethod
+    def needs_runtime(self):
         pass
