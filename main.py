@@ -7,6 +7,7 @@ from markdown import markdown
 import json
 import sys
 import os
+import asyncio
 
 import importlib.util
 
@@ -70,13 +71,7 @@ class MainWindow(QMainWindow):
         self.save_state()
         super().closeEvent(event)
     
-    def __init__(self):
-        super(MainWindow, self).__init__()
-        self.plugins = {}
-        self.current_theme = 'components/themes/classic.css'
-        self.current_font = 'Arial'
-        
-        def load_plugins(self):
+    async def load_plugins(self):
             plugins_dir = 'components/plugins'
             plugin_files = [f for f in os.listdir(plugins_dir) if f.endswith('.py')]
 
@@ -96,7 +91,7 @@ class MainWindow(QMainWindow):
                             plugin_action = QAction(f"{plugin_instance.get_name()} (v{plugin_instance.get_version()}) by {plugin_instance.get_author()}: {plugin_instance.get_description()}", self)
                 
                             if plugin_instance.run_on_startup():
-                                plugin_instance.run(self)
+                                await plugin_instance.run(self)
                             else:
                                 plugin_action.triggered.connect(lambda: plugin_instance.run(self))
                 
@@ -107,6 +102,12 @@ class MainWindow(QMainWindow):
                     error_action = QAction(f"Failed to load plugin {plugin_file}: {str(e)}", self)
                     print(f"Failed to load plugin {plugin_file}: {str(e)}")
                     plugins_menu.addAction(error_action)
+    
+    def __init__(self):
+        super(MainWindow, self).__init__()
+        self.plugins = {}
+        self.current_theme = 'components/themes/classic.css'
+        self.current_font = 'Arial'
                 
         self.unsaved_tabs = set()
         
@@ -144,7 +145,7 @@ class MainWindow(QMainWindow):
         
         self.load_state()
         print("Loaded state")
-        load_plugins(self)
+        asyncio.run(self.load_plugins())
         print("Loaded plugins")
         
         if len(sys.argv) > 1:

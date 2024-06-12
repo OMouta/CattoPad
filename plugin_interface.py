@@ -24,7 +24,3 @@ class PluginInterface(ABC):
     @abstractmethod
     def run_on_startup(self):
         pass
-
-    @abstractmethod
-    def needs_runtime(self):
-        pass
