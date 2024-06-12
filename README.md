@@ -1,3 +1,5 @@
+![output](https://github.com/OMouta/CattoPad/assets/79537410/6b2989e1-b019-4ffd-9d6b-cbe09869ec89)
+
 # Building the Application with PyInstaller
 
 To build this application into a standalone executable using PyInstaller, follow these steps:
